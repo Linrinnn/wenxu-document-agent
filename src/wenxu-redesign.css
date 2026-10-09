@@ -164,7 +164,7 @@
 .blue-preview.bp-entry{
  position:relative;display:flex;align-items:center;justify-content:center;
  min-height:100dvh;padding:110px 20px 45px;
- background:#e7f0fb url('/wenxu-mountains.svg') center center/cover no-repeat;
+ background:#e7f0fb url('./assets/wenxu-mountains.svg') center center/cover no-repeat;
 }
 .bp-login-brand{position:absolute;top:31px;left:clamp(25px,6vw,95px);display:flex;align-items:center;gap:13px;color:#183353;}
 .bp-login-brand strong{font-family:Georgia,'Noto Serif TC','PMingLiU',serif;font-size:24px;letter-spacing:.11em;}
@@ -271,3 +271,7 @@
  .bp-paper-footer{padding:11px 15px;}
 }
 @media(prefers-reduced-motion:reduce){.bp-chapters,.bp-assistant,.blue-preview button{transition:none;}}
+
+/* Pages preview is fully offline: authentication fields are decorative and deliberately disabled. */
+.bp-static-note{padding:10px 12px;border:1px solid #dce8fa;border-radius:9px;background:#eff5ff;color:#315787!important;font-size:12px!important;margin-bottom:15px!important;line-height:1.75!important;}
+.blue-preview .bp-login-form input:disabled{background:#f7f9fd;border-color:#e4eaf3;color:#93a3b9;opacity:1;cursor:not-allowed;}
