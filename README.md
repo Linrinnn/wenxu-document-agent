@@ -10,13 +10,14 @@
 
 | 想修改的內容 | 檔案 |
 | --- | --- |
-| 顏色、字型、間距、三欄尺寸、手機版樣式 | [src/blue-preview.css](src/blue-preview.css) |
-| 登入畫面、工作區、按鈕、文案與互動 | [src/BluePreview.tsx](src/BluePreview.tsx) |
+| 新版顏色、字型、單欄登入、沉浸式工作區、抽屜與 RWD | [src/wenxu-redesign.css](src/wenxu-redesign.css)（舊樣式仍保留於 [src/blue-preview.css](src/blue-preview.css)） |
+| 登入、章節抽屜、選取修改、逐段比較及其他互動 | [src/BluePreview.tsx](src/BluePreview.tsx) |
+| 山景背景插畫 | [public/wenxu-mountains.svg](public/wenxu-mountains.svg) |
 | 首次使用的箭頭與操作提示 | [src/WorkspaceTour.tsx](src/WorkspaceTour.tsx) |
 | 網頁標題與瀏覽器主題色 | [index.html](index.html) |
 | 首頁入口 | [src/main.tsx](src/main.tsx) |
 
-開啟檔案後按鉛筆編輯，或在儲存庫按 `.` 開啟 GitHub 網頁編輯器。修改完成後提交到 `main`，再告知 Codex「把 GitHub 最新版部署到 Cloudflare」。
+開啟檔案後按鉛筆編輯，或在儲存庫按 `.` 開啟 GitHub 網頁編輯器。修改完成後可先開 Pull Request 進行驗收，再合併至 `main`；只有在另行要求部署時才更新 Cloudflare。
 
 **GitHub 提交不會自動更新正式網站。** 此儲存庫沒有自動部署工作流程；由 Codex 取得最新版本、檢查變更、建置驗證後再手動發布。一般樣式修改不需要重建資料庫或重設帳號。
 
@@ -27,7 +28,7 @@
 - 章節清單、正文 Markdown 編輯與預覽、修改要求、手動建議比較採用、版本保存還原、Word 全文匯出。
 - 草稿依代號存於目前瀏覽器；**目前首頁尚未串接雲端稿件同步與 AI 生成**。網站與本機預覽草稿各自保存，移轉前請匯出備份。
 - 最多 40 章、本機 30 筆章節版本、20 筆建議及工作階段 10 次復原。版本不是無限備份。
-- 桌面三欄，手機使用頁籤切換。360／390／768／1440 為模擬尺寸驗收，不代表實體手機驗收。
+- 桌面採單欄正文優先、左側章節抽屜與右側修改／版本抽屜；選取文字顯示快捷工具；手機使用頁籤切換。360／390／768／1440 為瀏覽器模擬尺寸驗收，不代表實體手機驗收。
 - 舊版 `src/App.tsx`、`src/styles.css` 與相關後端模組保留；目前首頁載入 `BluePreview.tsx`。舊版雲端與四格式匯出功能不代表已整合到目前首頁。
 
 ## 本機啟動
