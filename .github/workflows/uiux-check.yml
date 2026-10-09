@@ -1,0 +1,42 @@
+name: Wenxu UI build and browser tests
+on:
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run db:local
+      - name: Start test-only local Worker
+        run: |
+          npm run dev:worker > /tmp/wenxu-worker.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl --fail --silent --output /dev/null http://127.0.0.1:8787/blue-preview; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/wenxu-worker.log
+          exit 1
+      - run: npx playwright test tests/e2e/blue-preview.spec.ts
+      - name: Save browser test screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wenxu-ui-browser-results
+          path: |
+            .qa/
+            test-results/
+          if-no-files-found: ignore
+          include-hidden-files: true

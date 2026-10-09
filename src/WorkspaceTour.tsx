@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import {ArrowRight,X} from 'lucide-react';
 export const tourSteps=[
  {target:'import',tab:'edit',title:'先匯入你的原稿',text:'點這個匯入按鈕，選擇 Word、PDF 或文字檔；也能直接貼上內容。確認原文後才會取代草稿。'},
- {target:'chapters',tab:'chapters',title:'選擇要修改的章節',text:'匯入後，章節會出現在左欄。點選章節，中間會切換到該章正文。'},
+ {target:'chapters',tab:'chapters',title:'選擇要修改的章節',text:'匯入後，可從「章節」打開導覽抽屜。點選章節即可切換正文，抽屜會自動收合。'},
  {target:'body',tab:'edit',title:'在正文區直接編輯',text:'在這裡輸入或修改正文。要針對一小段提出修改要求，可以先反白那段文字。'},
  {target:'prompt',tab:'prompt',title:'在這裡寫下修改要求',text:'例如「保留原意，改成正式語氣」。也可以點選下方範例快速填入。AI 尚未連線時不會修改正文。'},
  {target:'export',tab:'edit',title:'完成後匯出全文',text:'這裡會下載包含所有章節的 Word。修改會自動保存在這個瀏覽器，可隨時重新開啟導覽。'}
