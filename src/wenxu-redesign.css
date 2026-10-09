@@ -340,3 +340,36 @@
  .bp-import-steps>span{flex:0 0 auto;}
  .bp-login-brand>span:last-child{display:none;}
 }
+
+
+/* Mobile modal must not strand its confirmation actions below the fold. */
+@media(max-width:900px){
+  .bp-import-dialog{
+    display:flex;
+    flex-direction:column;
+    width:min(100%,680px);
+    max-height:calc(100dvh - 22px);
+    overflow:hidden;
+  }
+  .bp-import-dialog>header{flex:0 0 auto;margin-bottom:12px;}
+  .bp-import-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;}
+  .bp-import-dialog>footer{
+    flex:0 0 auto;
+    position:relative;
+    z-index:1;
+    margin-top:0;
+    padding:12px 0 0;
+    background:#fff;
+    border-top:1px solid #e0e8f5;
+    flex-wrap:wrap;
+  }
+  .bp-import-dialog>footer>span{flex:0 0 100%;font-size:11px;width:auto;margin:0 0 5px;color:#7083a0;}
+}
+@media(max-width:600px){
+  .bp-import-dialog{padding:17px 16px 12px;}
+  .bp-import-steps{margin-bottom:14px;padding-bottom:14px;}
+  .bp-import-dialog>footer>span{margin-bottom:4px;}
+  .blue-preview.bp-entry .bp-login-form{padding:31px 25px 27px;}
+  .blue-preview.bp-entry .bp-login-privacy{margin-top:20px;padding-top:15px;}
+  .blue-preview.bp-entry .bp-static-note{margin-bottom:8px!important;}
+}
