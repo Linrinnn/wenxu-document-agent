@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS projects (
+ id TEXT PRIMARY KEY, owner TEXT NOT NULL, version INTEGER NOT NULL,
+ body TEXT NOT NULL, updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS projects_owner ON projects(owner, updated_at);
+CREATE TABLE IF NOT EXISTS throttle (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);

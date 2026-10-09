@@ -1,0 +1,4 @@
+# 本地限定測試帳號 demo / local-demo-only；不可當正式帳號。
+LOCAL_DEV=true
+# 若要連接真實AI，先執行 npx wrangler login，再使用有remote AI的設定。
+# 正式部署需透過 wrangler secret put 設定 SESSION_SECRET 與 ACCOUNTS_JSON。

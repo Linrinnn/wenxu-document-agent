@@ -1,0 +1,5 @@
+import {it,expect,vi,afterEach} from 'vitest';import {api,setExpectedAlias} from '../src/api';
+afterEach(()=>{vi.unstubAllGlobals();setExpectedAlias(null);});
+it('登出POST仍發送JSON與來源可由瀏覽器驗證',async()=>{const f=vi.fn(async(_input:RequestInfo|URL,_init?:RequestInit)=>new Response('{"ok":true}',{headers:{'Content-Type':'application/json'}}));vi.stubGlobal('fetch',f);await api('/logout','POST');expect(new Headers(f.mock.calls[0][1]?.headers).get('Content-Type')).toBe('application/json');expect(f.mock.calls[0][1]?.body).toBe('{}');});
+it('斷線提示繁中且保留可以續作的說明',async()=>{vi.stubGlobal('fetch',async()=>{throw new TypeError('Failed to fetch')});await expect(api('/projects')).rejects.toThrow('連線');});
+it('工作區 API 帶目前代號，登入不帶舊帳號',async()=>{const f=vi.fn(async(_input:RequestInfo|URL,_init?:RequestInit)=>new Response('{}'));vi.stubGlobal('fetch',f);setExpectedAlias('student');await api('/projects');expect(new Headers(f.mock.calls[0][1]?.headers).get('X-Wenxu-Account')).toBe('student');await api('/login','POST',{alias:'teacher',password:'test-only'});expect(new Headers(f.mock.calls[1][1]?.headers).has('X-Wenxu-Account')).toBe(false);});

@@ -1,0 +1,23 @@
+import {describe,it,expect,beforeEach} from 'vitest';
+import {DatabaseSync} from 'node:sqlite';
+import worker,{hashPassword} from '../worker/index';
+import {newProject} from '../src/model';
+class DB {db=new DatabaseSync(':memory:'); constructor(){this.db.exec("CREATE TABLE projects(id TEXT PRIMARY KEY,owner TEXT NOT NULL,version INTEGER NOT NULL,body TEXT NOT NULL,updated_at TEXT NOT NULL);CREATE TABLE throttle(key TEXT PRIMARY KEY,count INTEGER NOT NULL,expires INTEGER NOT NULL);");}prepare(sql:string){const db=this.db;let args:any[]=[];const obj={bind(...v:any[]){args=v;return obj;},async first(){return db.prepare(sql).get(...args)||null;},async all(){return {results:db.prepare(sql).all(...args)};},async run(){const r=db.prepare(sql).run(...args);return {meta:{changes:Number(r.changes)}};}};return obj;}}
+let env:any;let cookie:string;let clientAlias:string;
+async function call(path:string,method='GET',body?:unknown,auth=true){return worker.fetch(new Request('http://localhost'+path,{method,headers:{...(body?{'Content-Type':'application/json','Origin':'http://localhost'}:{}),...(auth&&cookie?{Cookie:cookie,'X-Wenxu-Account':clientAlias}:{})},body:body?JSON.stringify(body):undefined}),env);}
+beforeEach(async()=>{cookie='';clientAlias='student';env={DB:new DB(),SESSION_SECRET:'test-secret-with-at-least-32-characters',ACCOUNTS_JSON:JSON.stringify([{alias:'student',...await hashPassword('test-password-123')},{alias:'teacher',...await hashPassword('teacher-password-123')}]),AI:{run:async()=>({response:'生成草稿'})},LOCAL_DEV:'true'};const r=await call('/api/login','POST',{alias:'student',password:'test-password-123'},false);cookie=r.headers.get('set-cookie')!.split(';')[0];});
+describe('登入與擁有權',()=>{
+it('拒絕未登入請求及錯誤密碼',async()=>{expect((await call('/api/projects','GET',undefined,false)).status).toBe(401);expect((await call('/api/login','POST',{alias:'student',password:'wrong'},false)).status).toBe(401);});
+it('不接受來源跨站寫入',async()=>{const r=await worker.fetch(new Request('http://localhost/api/projects',{method:'POST',headers:{Cookie:cookie,Origin:'https://evil.example','Content-Type':'application/json'},body:JSON.stringify(newProject())}),env);expect(r.status).toBe(403);});
+it('老師不能讀或生成學生專案',async()=>{const p=newProject();await call('/api/projects','POST',p);const r=await call('/api/login','POST',{alias:'teacher',password:'teacher-password-123'},false);cookie=r.headers.get('set-cookie')!.split(';')[0];clientAlias='teacher';expect((await call('/api/projects/'+p.id)).status).toBe(404);expect((await call('/api/projects/'+p.id+'/ai','POST',{action:'outline',projectVersion:1})).status).toBe(404);});
+it('版本衝突不覆寫新稿',async()=>{const p=newProject();const created=await (await call('/api/projects','POST',p)).json() as any;const newer={...created,title:'新稿'};expect((await call('/api/projects/'+p.id,'PUT',newer)).status).toBe(200);const conflict=await call('/api/projects/'+p.id,'PUT',{...created,title:'舊稿'});expect(conflict.status).toBe(409);expect((await conflict.json() as any).project.title).toBe('新稿');});
+it('AI超額不改正文及版本',async()=>{const p=newProject();p.sources=[{id:'s',name:'測試',text:'自製來源',createdAt:new Date().toISOString()}];await call('/api/projects','POST',p);env.AI.run=async()=>{throw new Error('daily neurons quota exceeded');};const r=await call('/api/projects/'+p.id+'/ai','POST',{action:'outline',projectVersion:1});expect(r.status).toBe(429);expect((await (await call('/api/projects/'+p.id)).json() as any).version).toBe(1);});
+it('登出清除session且production不啟用demo',async()=>{const r=await call('/api/logout','POST',{});expect(r.headers.get('set-cookie')).toContain('Max-Age=0');const prod={...env,LOCAL_DEV:'true',ACCOUNTS_JSON:undefined};expect((await worker.fetch(new Request('https://example.com/api/login',{method:'POST',headers:{Origin:'https://example.com','Content-Type':'application/json'},body:JSON.stringify({alias:'demo',password:'local-demo-only'})}),prod)).status).toBe(503);});
+});
+
+it('另一分頁換帳號後，舊分頁不得將來源與新稿存到新帳號',async()=>{
+ const r=await call('/api/login','POST',{alias:'teacher',password:'teacher-password-123'},false);cookie=r.headers.get('set-cookie')!.split(';')[0];
+ const p=newProject();p.sources=[{id:'private',name:'私人來源',text:'學生原稿',createdAt:new Date().toISOString()}];
+ for(const [path,method,data]of [['/api/projects','POST',p],['/api/projects/'+p.id,'PUT',p],['/api/projects/'+p.id+'/ai','POST',{action:'outline',projectVersion:1}]] as const){expect((await call(path,method,data)).status).toBe(401);}
+ expect((await call('/api/projects')).status).toBe(401);clientAlias='teacher';expect(await (await call('/api/projects')).json()).toEqual([]);
+});

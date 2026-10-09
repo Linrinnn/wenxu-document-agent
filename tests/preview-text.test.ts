@@ -1,0 +1,4 @@
+import {it,expect} from 'vitest';
+import {splitImportedText} from '../src/preview-text';
+it('辨識中文章節並保留前言與末段文字',()=>{const chapters=splitImportedText('原書前言\n第一章 背景\n背景原文\n第二章 方法\n最後一段');expect(chapters.map(c=>c.title)).toEqual(['前言','第一章 背景','第二章 方法']);expect(chapters.map(c=>c.content).join('\n')).toContain('最後一段');expect(chapters[0].content).toBe('原書前言');});
+it('Markdown章節或沒有章節的文本仍可完整匯入',()=>{expect(splitImportedText('# 第一章\n內容')[0]).toMatchObject({title:'第一章',content:'內容'});expect(splitImportedText('單一專案文本')[0]).toMatchObject({title:'全文',content:'單一專案文本'});expect(splitImportedText('')).toEqual([]);});
