@@ -206,7 +206,9 @@
  .bp-header .bp-brand{font-size:19px;}
  .bp-header-actions{width:auto;margin-left:auto;gap:4px;}
  .blue-preview .bp-header-actions button{min-height:34px;padding:6px 8px;font-size:11px;}
- .bp-header-actions .bp-guide-button,.bp-header-actions .bp-panel-action,.bp-header-actions .bp-import-action{display:none!important;}
+ .bp-header-actions .bp-panel-action{display:none!important;}
+ .blue-preview .bp-header-actions .bp-guide-button{display:inline-flex!important;font-size:0!important;min-width:34px;padding:7px!important;}
+ .blue-preview .bp-header-actions .bp-guide-button svg{display:block!important;}
  .bp-header-actions .bp-primary{margin:0;}
  .bp-icon-rail,.bp-panel-scrim{display:none!important;}
  .bp-workspace{display:block;min-height:calc(100dvh - 112px);}
