@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {Feather,BookOpen,Upload,Download,Check,ArrowRight,FileText,X,CheckCircle2,CircleHelp,Plus,Bold,Heading2,List,Quote,Undo2,History,PencilLine,Sparkles,ClipboardPaste,MessagesSquare,ShieldCheck} from 'lucide-react';
+import {Feather,BookOpen,Upload,Download,Check,ArrowRight,FileText,X,CheckCircle2,CircleHelp,Plus,Bold,Heading2,List,Quote,Undo2,History,PencilLine,Sparkles,ClipboardPaste,MessagesSquare,ShieldCheck,LogOut} from 'lucide-react';
 import {extractSource,exportProject} from './documents';
 import {splitImportedText,type PreviewChapter} from './preview-text';
 import type {Project,Identity} from './types';
@@ -57,9 +57,9 @@ function Workspace({identity,seed,onLogout}:{identity:Identity;seed:Draft;onLogo
  <button className="bp-panel-action" aria-expanded={chaptersOpen} onClick={()=>{setChaptersOpen(v=>!v);setAssistantOpen(false);setTab('chapters');}}><BookOpen size={16}/>章節</button>
  <button className="bp-panel-action" aria-expanded={assistantOpen} onClick={()=>{setAssistantTab('request');setAssistantOpen(v=>!v);setChaptersOpen(false);setTab('prompt');}}><Sparkles size={16}/>修改工具</button>
  <button className="bp-primary" data-tour="export" disabled={busy||!count} onClick={()=>void download()}><Download size={16}/>匯出 Word</button>
- <span className="bp-account"><span className="bp-avatar">{identity.alias.slice(0,1).toUpperCase()}</span>{identity.alias}</span><button className="bp-logout" onClick={onLogout}>登出</button>
+ <span className="bp-account"><span className="bp-avatar">{identity.alias.slice(0,1).toUpperCase()}</span>{identity.alias}</span><button className="bp-logout" onClick={onLogout}>登出</button><button className="bp-mobile-logout" title="離開預覽或登出" aria-label="登出" onClick={onLogout}><LogOut size={16}/></button>
  </div></header>
- <main className="bp-main"><nav className="bp-mobile-tabs" aria-label="工作區切換">{[['chapters','章節'],['edit','編輯'],['prompt','修改要求']].map(([id,label])=><button key={id} aria-pressed={tab===id} onClick={()=>setTab(id)}>{label}</button>)}</nav>{notice&&<div className="bp-notice" role="status"><CheckCircle2 size={15}/><span>{notice}</span><button aria-label="關閉訊息" onClick={()=>setNotice('')}><X size={15}/></button></div>}
+ <main className="bp-main"><nav className="bp-mobile-tabs" aria-label="工作區切換"><button aria-pressed={tab==='chapters'} onClick={()=>{setTab('chapters');setChaptersOpen(false);setAssistantOpen(false);}}><BookOpen size={19}/><span>章節</span></button><button aria-pressed={tab==='edit'} onClick={()=>{setTab('edit');setChaptersOpen(false);setAssistantOpen(false);}}><PencilLine size={19}/><span>編輯</span></button><button aria-pressed={tab==='prompt'} onClick={()=>{setTab('prompt');setChaptersOpen(false);setAssistantOpen(false);}}><Sparkles size={19}/><span>修改要求</span></button><button aria-label="版本" aria-pressed={tab==='prompt'&&assistantTab==='versions'} onClick={()=>{setAssistantTab('versions');setTab('prompt');setChaptersOpen(false);setAssistantOpen(false);}}><History size={19}/><span>版本</span></button></nav>{notice&&<div className="bp-notice" role="status"><CheckCircle2 size={15}/><span>{notice}</span><button aria-label="關閉訊息" onClick={()=>setNotice('')}><X size={15}/></button></div>}
  <div className={'bp-workspace bp-tab-'+tab+(chaptersOpen?' bp-show-chapters':'')+(assistantOpen?' bp-show-assistant':'')}>
  <nav className="bp-icon-rail" aria-label="工作區導覽">
  <button aria-label="章節導覽" title="章節導覽" aria-expanded={chaptersOpen} onClick={()=>{setChaptersOpen(v=>!v);setAssistantOpen(false);}}><BookOpen size={19}/></button>
