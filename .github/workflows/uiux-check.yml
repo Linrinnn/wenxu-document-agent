@@ -39,3 +39,4 @@ jobs:
             .qa/
             test-results/
           if-no-files-found: ignore
+          include-hidden-files: true
