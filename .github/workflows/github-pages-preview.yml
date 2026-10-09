@@ -1,0 +1,44 @@
+name: GitHub Pages UI/UX preview
+on:
+  push:
+    branches:
+      - design/wenxu-immersive-ui-20261009
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages-wenxu-preview
+  cancel-in-progress: true
+jobs:
+  pages-preview:
+    if: github.ref == 'refs/heads/design/wenxu-immersive-ui-20261009'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build static UI walkthrough without production backend
+        run: npm run build -- --base=/wenxu-document-agent/
+        env:
+          VITE_STATIC_PREVIEW: "true"
+      - name: Verify local bundle
+        run: |
+          test -f dist/index.html
+          test -d dist/assets
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload preview
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
+      - name: Publish preview
+        id: deployment
+        uses: actions/deploy-pages@v4
