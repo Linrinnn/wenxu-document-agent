@@ -1,0 +1,33 @@
+name: Mobile design diagnostic
+on:
+  push:
+    branches:
+      - design/wenxu-immersive-ui-20261009
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Build Pages preview
+        run: npm run build -- --base=/wenxu-document-agent/
+        env:
+          VITE_STATIC_PREVIEW: "true"
+      - name: Start static preview server
+        run: |
+          npx vite preview --host 127.0.0.1 --port 4173 > /tmp/wenxu-vite.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl --fail -sI http://127.0.0.1:4173/wenxu-document-agent/ && exit 0
+            sleep 2
+          done
+          cat /tmp/wenxu-vite.log
+          exit 1
+      - run: node scripts/mobile-diagnostic.mjs
