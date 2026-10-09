@@ -139,7 +139,14 @@ for(const width of [360,390,768,1440])test('RWD '+width+' 保留主要功能且�
     await showAssistant(page,true);
     await page.getByLabel('提示詞').fill('精簡段落');
     await expect(page.getByLabel('提示詞')).toHaveValue('精簡段落');
+    await page.getByRole('navigation',{name:'工作區切換'}).getByRole('button',{name:'版本',exact:true}).click();
+    await expect(page.getByRole('navigation',{name:'助手功能'}).getByRole('button',{name:/版本/})).toHaveAttribute('aria-pressed','true');
     await page.getByRole('navigation',{name:'工作區切換'}).getByRole('button',{name:'編輯',exact:true}).click();
+    await expect(page.getByLabel('正文內容')).toBeVisible();
+    const bar=await page.getByRole('navigation',{name:'工作區切換'}).boundingBox();
+    expect(bar).not.toBeNull();
+    expect(bar!.y+bar!.height).toBeLessThanOrEqual(902);
+    await expect(page.getByRole('button',{name:'登出',exact:true})).toBeVisible();
   }else{
     await showChapters(page);
     await page.getByRole('button',{name:'關閉章節導覽'}).click();
