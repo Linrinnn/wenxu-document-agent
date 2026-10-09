@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './blue-preview.css';
 import './wenxu-redesign.css';
+const STATIC_PREVIEW=import.meta.env.VITE_STATIC_PREVIEW === 'true';
 const SAMPLE='第一章 計畫背景\n閱讀讓我們認識不同的生活，也讓人與人之間產生連結。本計畫希望透過社區共讀活動，提供居民一個分享故事、交換想法的空間。\n\n活動將以在地生活為主題，邀請不同年齡的居民共同參與。從一本書出發，延伸到自己的經驗，讓閱讀成為日常生活的一部分。\n\n本章為自製介面示範文字。實際執行方式、參與人數與經費，待後續補充。\n第二章 執行方式\n每月安排一場小型共讀，選擇與社區生活相關的文章或書籍。活動由主持人引導討論，保留自由分享的時間。\n\n場地、時程與主持人皆待確認。\n第三章 預期成果\n希望參與者能透過閱讀交流，增加對在地生活的理解。成果指標與評估方式待補充，不預先填入未取得的數據。';
 interface Draft{title:string;chapters:PreviewChapter[];sourceName?:string;versions?:SavedVersion[];suggestions?:Suggestion[]}
 function draftKey(alias:string){return 'wenxu.blue-preview.v2.'+encodeURIComponent(alias);}
@@ -47,7 +48,7 @@ function Workspace({identity,seed,onLogout}:{identity:Identity;seed:Draft;onLogo
  function restore(v:SavedVersion){remember();setDoc(d=>({...d,chapters:d.chapters.map(c=>c.id===v.chapterId?{...c,title:v.title,content:v.content}:c),versions:[versionOf(chapter,'還原版本前'),...(d.versions||[])].slice(0,30)}));setMode('edit');setNotice('已還原章節版本，還原前的內容也已保存。');}
  return <div className="blue-preview product-workspace">
  <header className="bp-header">
- <a className="bp-brand" href="/" aria-label="文序首頁"><span className="bp-logo"><Feather size={21}/></span><span>文序</span></a>
+ <a className="bp-brand" href={STATIC_PREVIEW?import.meta.env.BASE_URL:'/'} aria-label="文序首頁"><span className="bp-logo"><Feather size={21}/></span><span>文序</span></a>
  <span className="bp-header-divider"/><span className="bp-document-name">{doc.title||'未命名文稿'}</span>
  <span className="bp-local-label"><CheckCircle2 size={14}/>{status==='已存本機'?'僅儲存在這台裝置':status}</span>
  <div className="bp-header-actions">
@@ -115,20 +116,20 @@ function ImportDialog({onClose,onConfirm}:{onClose:()=>void;onConfirm:(d:Draft)=
 
 export default function BluePreview(){
  const [identity,setIdentity]=useState<Identity|null>(null),[checking,setChecking]=useState(true),[alias,setAlias]=useState(''),[password,setPassword]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[draft,setDraft]=useState<Draft|null>(null);
- function acceptIdentity(who:Identity){setExpectedAlias(who.alias);setIdentity(who);setDraft(initial(who.alias)||{title:'',chapters:[{id:crypto.randomUUID(),title:'開始寫作',content:''}]});setPassword('');}
- useEffect(()=>{let active=true;void api<Identity>('/me').then(who=>{if(active)acceptIdentity(who);}).catch(()=>{}).finally(()=>{if(active)setChecking(false);});return()=>{active=false;};},[]);
- async function login(e:React.FormEvent){e.preventDefault();setBusy(true);setError('');try{acceptIdentity(await api<Identity>('/login','POST',{alias,password}));}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
- async function logout(){setBusy(true);try{await api('/logout','POST');setExpectedAlias(null);setIdentity(null);setDraft(null);setError('');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ function acceptIdentity(who:Identity){setExpectedAlias(who.alias);setIdentity(who);setDraft(initial(who.alias)||(STATIC_PREVIEW?{title:'社區閱讀推廣計畫',chapters:splitImportedText(SAMPLE),sourceName:'內建示範原稿'}:{title:'',chapters:[{id:crypto.randomUUID(),title:'開始寫作',content:''}]}));setPassword('');}
+ useEffect(()=>{if(STATIC_PREVIEW){setChecking(false);return;}let active=true;void api<Identity>('/me').then(who=>{if(active)acceptIdentity(who);}).catch(()=>{}).finally(()=>{if(active)setChecking(false);});return()=>{active=false;};},[]);
+ async function login(e:React.FormEvent){e.preventDefault();if(STATIC_PREVIEW){acceptIdentity({alias:'github-pages-preview',mode:'local'});return;}setBusy(true);setError('');try{acceptIdentity(await api<Identity>('/login','POST',{alias,password}));}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ async function logout(){if(STATIC_PREVIEW){setExpectedAlias(null);setIdentity(null);setDraft(null);setError('');return;}setBusy(true);try{await api('/logout','POST');setExpectedAlias(null);setIdentity(null);setDraft(null);setError('');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
  if(checking)return <div className="blue-preview bp-entry"><p role="status">正在確認登入狀態…</p></div>;
  if(!identity)return <div className="blue-preview bp-entry">
  <header className="bp-login-brand"><span className="bp-logo"><Feather size={25}/></span><strong>文序</strong><span>書寫，讓思緒更清晰</span></header>
  <div className="bp-login-layout">
  <form className="bp-login-form" onSubmit={e=>void login(e)}>
- <h1>歡迎回到文序</h1><p>繼續編輯，讓思緒走得更遠。</p>
- <label htmlFor="bp-alias">使用者代號</label><input id="bp-alias" autoComplete="username" required value={alias} onChange={e=>setAlias(e.target.value)} placeholder="請輸入使用者代號"/>
- <label htmlFor="bp-password">密碼</label><input id="bp-password" type="password" autoComplete="current-password" required value={password} onChange={e=>setPassword(e.target.value)} placeholder="請輸入密碼"/>
+ <h1>歡迎回到文序</h1><p>繼續編輯，讓思緒走得更遠。</p>{STATIC_PREVIEW&&<p className="bp-static-note" role="note">這是 GitHub Pages 互動展示，免輸入帳密。資料只保存在目前瀏覽器，不連接正式服務。</p>}
+ <label htmlFor="bp-alias">使用者代號</label><input id="bp-alias" autoComplete="username" required={!STATIC_PREVIEW} disabled={STATIC_PREVIEW} value={alias} onChange={e=>setAlias(e.target.value)} placeholder="請輸入使用者代號"/>
+ <label htmlFor="bp-password">密碼</label><input id="bp-password" type="password" autoComplete="current-password" required={!STATIC_PREVIEW} disabled={STATIC_PREVIEW} value={password} onChange={e=>setPassword(e.target.value)} placeholder="請輸入密碼"/>
  {error&&<p className="bp-error" role="alert">{error}</p>}
- <button className="bp-primary" disabled={busy} type="submit">{busy?'登入中…':'登入'}<ArrowRight size={17}/></button>
+ <button className="bp-primary" disabled={busy} type="submit">{busy?'登入中…':STATIC_PREVIEW?'進入互動預覽':'登入'}<ArrowRight size={17}/></button>
  {['127.0.0.1','localhost','[::1]'].includes(location.hostname)&&<div className="bp-demo">僅供本機測試 · 帳號 <b>demo</b> · 密碼 <b>local-demo-only</b></div>}
  <div className="bp-login-privacy"><ShieldCheck size={19}/><div><strong>草稿儲存在這台裝置</strong><span>目前尚未啟用雲端同步或 AI 修改。請定期匯出 Word 備份。</span></div></div>
  </form></div></div>;
