@@ -1,8 +1,5 @@
 name: Wenxu UI build and browser tests
 on:
-  push:
-    branches:
-      - design/wenxu-immersive-ui-20261009
   pull_request:
     branches:
       - main
