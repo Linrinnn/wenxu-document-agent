@@ -26,7 +26,7 @@
 .bp-main{min-height:calc(100dvh - 70px);}
 .bp-workspace{
  position:relative;display:grid;grid-template-columns:65px minmax(0,1fr);
- min-height:calc(100dvh - 70px);background:#fff;isolation:isolate;
+ min-height:calc(100dvh - 70px);background:#fff;isolation:isolate;overflow:clip;
 }
 .bp-icon-rail{
  grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:center;gap:13px;
