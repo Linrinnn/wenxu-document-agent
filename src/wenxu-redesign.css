@@ -275,3 +275,68 @@
 /* Pages preview is fully offline: authentication fields are decorative and deliberately disabled. */
 .bp-static-note{padding:10px 12px;border:1px solid #dce8fa;border-radius:9px;background:#eff5ff;color:#315787!important;font-size:12px!important;margin-bottom:15px!important;line-height:1.75!important;}
 .blue-preview .bp-login-form input:disabled{background:#f7f9fd;border-color:#e4eaf3;color:#93a3b9;opacity:1;cursor:not-allowed;}
+
+
+/* Mobile interaction pass: bottom navigation instead of desktop tabs.
+   Safe area inset keeps navigation clear of iOS home indicator. */
+.bp-mobile-logout{display:none!important}
+@media(max-width:900px){
+ .blue-preview.product-workspace{min-height:100dvh;min-height:100svh;padding-bottom:calc(70px + env(safe-area-inset-bottom,0px));}
+ .bp-main{min-height:calc(100svh - 130px);}
+ .bp-workspace{min-height:calc(100svh - 130px);overflow:visible;}
+ .bp-mobile-tabs{
+   position:fixed!important;top:auto!important;bottom:0;left:0;right:0;
+   z-index:80;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));
+   gap:0;padding:5px 5px calc(6px + env(safe-area-inset-bottom,0px));
+   background:#ffffffee!important;backdrop-filter:blur(14px);
+   border-top:1px solid #e1e9f3;border-bottom:0;box-shadow:0 -8px 22px #1c477412;
+ }
+ .blue-preview .bp-mobile-tabs button{
+   min-width:0;min-height:54px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;
+   padding:6px 0;border:0;border-radius:10px;background:transparent;font-size:10px;
+   color:#71829d;line-height:1.3;
+ }
+ .blue-preview .bp-mobile-tabs button svg{display:block;flex-shrink:0;}
+ .blue-preview .bp-mobile-tabs button[aria-pressed=true]{
+   background:#eaf2ff!important;color:#2663b8;border:0!important;font-weight:600;
+ }
+ .blue-preview .bp-header-actions .bp-mobile-logout{
+   display:inline-flex!important;align-items:center;justify-content:center;
+   padding:6px!important;width:36px;min-width:36px;min-height:36px;
+   border:1px solid #e4ebf5;color:#54719c;background:#fff;
+ }
+ .blue-preview .bp-header-actions .bp-logout{display:none!important;}
+ .bp-header{min-height:58px;flex-wrap:nowrap!important;}
+ .bp-header-actions{width:auto!important;flex-wrap:nowrap!important;gap:5px;}
+ .bp-header .bp-document-name{display:none;}
+ .bp-paper-toolbar{min-height:44px;}
+ .bp-breadcrumb{min-width:0;}
+ .bp-breadcrumb select{width:min(55vw,230px);max-width:100%;text-overflow:ellipsis;}
+ .bp-editor-status{white-space:nowrap;}
+ .bp-tab-chapters .bp-chapters,.bp-tab-prompt .bp-assistant{min-height:calc(100svh - 145px);}
+ .bp-assistant-content{margin:0 auto;flex:1;min-width:0;}
+ .bp-paper-footer{padding-bottom:15px;}
+ .bp-modal-backdrop{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
+}
+@media(max-width:600px){
+ .bp-header{padding:9px 11px;gap:5px;}
+ .bp-header .bp-brand{font-size:18px;letter-spacing:.03em;white-space:nowrap;}
+ .bp-header .bp-logo{width:27px;height:28px;}
+ .blue-preview .bp-header-actions .bp-import-action{font-size:0!important;min-width:34px;padding:6px!important;gap:0;}
+ .blue-preview .bp-header-actions .bp-import-action svg{width:18px;height:18px;display:block;}
+ .blue-preview .bp-header-actions .bp-guide-button{min-width:34px!important;}
+ .blue-preview .bp-header-actions .bp-primary{padding:7px 9px;font-size:10px;}
+ .blue-preview .bp-header-actions .bp-primary svg{width:14px;}
+ .bp-document{width:100%;overflow-wrap:anywhere;padding:24px 18px 45px;}
+ .bp-canvas{min-width:0;}
+ .bp-formatbar{gap:4px;scrollbar-width:thin;}
+ .bp-paper-toolbar{gap:6px;padding:0 13px;}
+ .bp-paper-toolbar .bp-editor-status{font-size:10px;}
+ .bp-assistant-header{flex-wrap:nowrap;}
+ .bp-assistant-content,.bp-chapters{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;}
+ .bp-guide-grid,.bp-import-dialog{min-width:0;}
+ .bp-import-dialog{width:100%;max-width:100%;overflow-x:hidden;}
+ .bp-import-steps{flex-wrap:wrap;justify-content:flex-start;}
+ .bp-import-steps>span{flex:0 0 auto;}
+ .bp-login-brand>span:last-child{display:none;}
+}
