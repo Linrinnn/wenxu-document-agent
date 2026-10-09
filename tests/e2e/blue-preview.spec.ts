@@ -97,7 +97,7 @@ test('沉浸式編輯、抽屜章節、原稿確認、復原、登出與Word匯�
   await page.getByRole('button',{name:'登出',exact:true}).click();
   await expect(page.getByRole('heading',{name:'歡迎回到文序'})).toBeVisible();
   await signIn(page);
-  await expect(body).toHaveValue('第二章保留文字');
+  await expect(body).toHaveValue('重新編輯並保存的正文');
   expect(errors).toEqual([]);
 });
 
