@@ -104,7 +104,7 @@ test('沉浸式編輯、抽屜章節、原稿確認、復原、登出與Word匯�
 test('上下文工具、使用者建議、逐段差異、採用與版本還原',async({page})=>{
   await signIn(page);await importSample(page);
   const body=page.getByLabel('正文內容');await body.fill('原始正文');await body.blur();
-  await body.evaluate((el:HTMLTextAreaElement)=>{el.focus();el.setSelectionRange(0,4);el.dispatchEvent(new Event('select',{bubbles:true}));});
+  await body.focus();await body.press('Control+Home');await body.press('Shift+End');
   await expect(page.locator('.bp-selection-toolbar')).toBeVisible();
   await page.getByRole('button',{name:'精簡',exact:true}).click();
   await expect(page.getByLabel('提示詞')).toHaveValue(/精簡選取文字/);
