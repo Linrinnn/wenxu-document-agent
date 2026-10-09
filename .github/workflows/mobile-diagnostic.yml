@@ -23,7 +23,7 @@ jobs:
           VITE_STATIC_PREVIEW: "true"
       - name: Start static preview server
         run: |
-          npx vite preview --host 127.0.0.1 --port 4173 > /tmp/wenxu-vite.log 2>&1 &
+          npx vite preview --base=/wenxu-document-agent/ --host 127.0.0.1 --port 4173 > /tmp/wenxu-vite.log 2>&1 &
           for i in $(seq 1 30); do
             curl --fail -sI http://127.0.0.1:4173/wenxu-document-agent/ && exit 0
             sleep 2
