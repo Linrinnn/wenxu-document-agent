@@ -108,3 +108,9 @@
 - 本次只初始化獨立Git、審查檔案並上傳原始碼；不設定自動部署、不改Cloudflare。
 - 憑證、SQLite、套件、建置結果與私人來源均排除；第二組帳號及AI／雲端續作仍待完成。
 - 自省：舊README累積多段歷史狀態容易誤導改版；改以單一目前狀態為主，歷史留在LOG。
+
+### GitHub上傳結果
+- 52份檔案初版f709acd已推送私人儲存庫https://github.com/Linrinnn/wenxu-document-agent，main追蹤origin/main。
+- GitHub實際頁面顯示Private、原始碼清單與中文README；已檢查暫存清單及常見金鑰格式，無憑證／SQLite／套件／建置暫存。
+- 本次只改版本控管與說明文件，未改應用程式或Cloudflare，未重跑與文件無關的功能測試。
+- .dev.vars.example只有本機設定說明，已加入明確例外；真實.dev.vars仍排除。
