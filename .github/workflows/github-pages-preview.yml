@@ -16,7 +16,7 @@ jobs:
     if: github.ref == 'refs/heads/design/wenxu-immersive-ui-20261009'
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      name: wenxu-ui-preview
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
